@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 function SocialCard(props: SocialCardProps) {
+  const [likes, setLikes] = useState(0);
+
   return (
     <>
       <div>
@@ -14,7 +18,8 @@ function SocialCard(props: SocialCardProps) {
 
       <div>{props.body}</div>
 
-      <button>Like</button>
+      <button onClick={() => setLikes(likes + 1)}>Like</button>
+      <div>{likes}</div>
     </>
   );
 }
