@@ -123,11 +123,8 @@ function SocialCard({
       >
         <button onClick={() => handleReact("like")}>👍 {reactions.like}</button>
         <button onClick={() => handleReact("love")}>❤️ {reactions.love}</button>
-        <button onClick={() => handleReact("laugh")}>
-          😂 {reactions.laugh}
-        </button>
-        <button onClick={() => handleReact("angry")}>
-          😡 {reactions.angry}
+        <button onClick={() => handleReact("laugh")}>😂 {reactions.laugh}
+        </button><button onClick={() => handleReact("angry")}>😡 {reactions.angry}
         </button>
       </div>
 
