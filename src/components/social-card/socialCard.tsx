@@ -37,7 +37,7 @@ function SocialCard({
     const savedComments = localStorage.getItem(`comments_${postId}`);
     return savedComments ? JSON.parse(savedComments) : comments;
   });
-  
+
   const [commentName, setCommentName] = useState("");
   const [commentBody, setCommentBody] = useState("");
 
@@ -80,11 +80,11 @@ function SocialCard({
         </span>
       </div>
 
+      <div style={{ marginBottom: "10px", textAlign: "left" }}>{body}</div>
+      
       <div style={{ marginBottom: "10px" }}>
         <img src={mainImage} alt="Main content" style={{ width: "100%", height: "auto" }} />
       </div>
-
-      <div style={{ marginBottom: "10px" }}>{body}</div>
 
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
         <button onClick={() => handleReact("like")}>👍 {reactions.like}</button>
@@ -94,12 +94,22 @@ function SocialCard({
       </div>
 
       <div style={{ marginTop: "20px" }}>
-        <h3>Comments</h3>
         {commentList.map((comment) => (
-          <div key={comment.id} style={{ borderTop: "1px solid #eee", paddingTop: "10px", marginTop: "10px" }}>
+          <div key={comment.id} style={{ position: "relative", borderTop: "1px solid #eee", paddingTop: "10px", marginTop: "10px" }}>
+            <span 
+              onClick={() => handleRemoveComment(comment.id)} 
+              style={{ 
+                position: "absolute", 
+                top: "10px", 
+                right: "10px", 
+                color: "red", 
+                cursor: "pointer" 
+              }}
+            >
+              &#10005;
+            </span>
             <strong>{comment.name}</strong> at {comment.time}
             <p>{comment.body}</p>
-            <button onClick={() => handleRemoveComment(comment.id)}>Remove</button>
           </div>
         ))}
       </div>
