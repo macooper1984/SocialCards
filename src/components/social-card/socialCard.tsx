@@ -35,6 +35,8 @@ function SocialCard({
       : { like: 0, love: 0, laugh: 0, angry: 0 };
   });
 
+  const paragraphs = body.split("\n");
+
   const [commentList, setCommentList] = useState<Comment[]>(() => {
     const savedComments = localStorage.getItem(`comments_${postId}`);
     return savedComments ? JSON.parse(savedComments) : comments;
@@ -104,13 +106,16 @@ function SocialCard({
         </span>
       </div>
 
-      <div style={{ marginBottom: "10px", textAlign: "left" }}>{body}</div>
+      <div>
+        {paragraphs.map((paragraph, index) => (
+          <p key={index}>{paragraph}</p>
+        ))}
+      </div>
 
-      <div style={{ marginBottom: "10px" }}>
+      <div className="image-container" style={{ marginBottom: "10px" }}>
         <img
           src={mainImage}
           alt="Main content"
-          style={{ width: "100%", height: "auto" }}
         />
       </div>
 
