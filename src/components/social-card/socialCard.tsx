@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 
-// Define the prop types for better type checking
 type Comment = {
   id: number;
   name: string;
@@ -27,37 +26,44 @@ function SocialCard({
   body,
   comments = [],
 }: SocialCardProps) {
-    // Initialize likes state with a function to read from localStorage
-    const [likes, setLikes] = useState<number>(() => {
-      const savedLikes = localStorage.getItem('likes');
-      return savedLikes ? parseInt(savedLikes, 10) : 0;
-    });
-    
-  const [commentList, setCommentList] = useState<Comment[]>(comments);
+  const [reactions, setReactions] = useState<{ [key: string]: number }>(() => {
+    const savedReactions = localStorage.getItem('reactions');
+    return savedReactions ? JSON.parse(savedReactions) : { like: 0, love: 0, laugh: 0, angry: 0 };
+  });
+
+  const [commentList, setCommentList] = useState<Comment[]>(() => {
+    const savedComments = localStorage.getItem('comments');
+    return savedComments ? JSON.parse(savedComments) : comments;
+  });
   const [commentBody, setCommentBody] = useState("");
 
-  // Load likes count from localStorage on component mount
   useEffect(() => {
-    const savedLikes = localStorage.getItem('likes');
-    if (savedLikes) {
-      setLikes(parseInt(savedLikes, 10));
-    }
-  }, []);
+    localStorage.setItem('reactions', JSON.stringify(reactions));
+  }, [reactions]);
 
-  // Save likes count to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('likes', likes.toString());
-  }, [likes]);
+    localStorage.setItem('comments', JSON.stringify(commentList));
+  }, [commentList]);
+
+  const handleReact = (reaction: string) => {
+    setReactions((prevReactions) => ({ ...prevReactions, [reaction]: prevReactions[reaction] + 1 }));
+  };
 
   const handleAddComment = () => {
+    if (commentBody.trim() === "") return;
+
     const newComment: Comment = {
-      id: commentList.length + 1,
-      name: "User", // Ideally, this would be dynamic based on the logged-in user
+      id: Date.now(),
+      name: "User",
       time: new Date().toLocaleString(),
       body: commentBody,
     };
-    setCommentList([...commentList, newComment]);
+    setCommentList((prevComments) => [...prevComments, newComment]);
     setCommentBody("");
+  };
+
+  const handleRemoveComment = (id: number) => {
+    setCommentList((prevComments) => prevComments.filter((comment) => comment.id !== id));
   };
 
   return (
@@ -70,13 +76,17 @@ function SocialCard({
       </div>
 
       <div style={{ marginBottom: "10px" }}>
-        <img src={mainImage} alt="Main content" width={500} style={{ width: "100%", height: "auto" }} />
+        <img src={mainImage} alt="Main content" style={{ width: "100%", height: "auto" }} />
       </div>
 
       <div style={{ marginBottom: "10px" }}>{body}</div>
 
-      <button onClick={() => setLikes(likes + 1)}>Like</button>
-      <div>{likes} {likes === 1 ? 'Like' : 'Likes'}</div>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+        <button onClick={() => handleReact("like")}>👍 {reactions.like}</button>
+        <button onClick={() => handleReact("love")}>❤️ {reactions.love}</button>
+        <button onClick={() => handleReact("laugh")}>😂 {reactions.laugh}</button>
+        <button onClick={() => handleReact("angry")}>😡 {reactions.angry}</button>
+      </div>
 
       <div style={{ marginTop: "20px" }}>
         <h3>Comments</h3>
@@ -84,17 +94,19 @@ function SocialCard({
           <div key={comment.id} style={{ borderTop: "1px solid #eee", paddingTop: "10px", marginTop: "10px" }}>
             <strong>{comment.name}</strong> at {comment.time}
             <p>{comment.body}</p>
+            <button onClick={() => handleRemoveComment(comment.id)}>Remove</button>
           </div>
         ))}
-        <div style={{ marginTop: "20px" }}>
-          <textarea
-            value={commentBody}
-            onChange={(e) => setCommentBody(e.target.value)}
-            placeholder="Add a comment"
-            style={{ width: "100%", height: "50px", padding: "10px" }}
-          ></textarea>
-          <button onClick={handleAddComment} style={{ marginTop: "10px" }}>Add Comment</button>
-        </div>
+      </div>
+
+      <div style={{ marginTop: "20px" }}>
+        <textarea
+          value={commentBody}
+          onChange={(e) => setCommentBody(e.target.value)}
+          placeholder="Add a comment"
+          style={{ width: "100%", minHeight: "50px", padding: "10px", boxSizing: "border-box" }}
+        ></textarea>
+        <button onClick={handleAddComment} style={{ marginTop: "10px" }}>Add Comment</button>
       </div>
     </div>
   );
