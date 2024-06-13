@@ -8,6 +8,7 @@ type Comment = {
 };
 
 type SocialCardProps = {
+  postId: string;
   portrait: string;
   firstName: string;
   surname: string;
@@ -18,6 +19,7 @@ type SocialCardProps = {
 };
 
 function SocialCard({
+  postId,
   portrait,
   firstName,
   surname,
@@ -27,38 +29,41 @@ function SocialCard({
   comments = [],
 }: SocialCardProps) {
   const [reactions, setReactions] = useState<{ [key: string]: number }>(() => {
-    const savedReactions = localStorage.getItem('reactions');
+    const savedReactions = localStorage.getItem(`reactions_${postId}`);
     return savedReactions ? JSON.parse(savedReactions) : { like: 0, love: 0, laugh: 0, angry: 0 };
   });
 
   const [commentList, setCommentList] = useState<Comment[]>(() => {
-    const savedComments = localStorage.getItem('comments');
+    const savedComments = localStorage.getItem(`comments_${postId}`);
     return savedComments ? JSON.parse(savedComments) : comments;
   });
+  
+  const [commentName, setCommentName] = useState("");
   const [commentBody, setCommentBody] = useState("");
 
   useEffect(() => {
-    localStorage.setItem('reactions', JSON.stringify(reactions));
-  }, [reactions]);
+    localStorage.setItem(`reactions_${postId}`, JSON.stringify(reactions));
+  }, [reactions, postId]);
 
   useEffect(() => {
-    localStorage.setItem('comments', JSON.stringify(commentList));
-  }, [commentList]);
+    localStorage.setItem(`comments_${postId}`, JSON.stringify(commentList));
+  }, [commentList, postId]);
 
   const handleReact = (reaction: string) => {
     setReactions((prevReactions) => ({ ...prevReactions, [reaction]: prevReactions[reaction] + 1 }));
   };
 
   const handleAddComment = () => {
-    if (commentBody.trim() === "") return;
+    if (commentBody.trim() === "" || commentName.trim() === "") return;
 
     const newComment: Comment = {
       id: Date.now(),
-      name: "User",
+      name: commentName,
       time: new Date().toLocaleString(),
       body: commentBody,
     };
     setCommentList((prevComments) => [...prevComments, newComment]);
+    setCommentName("");
     setCommentBody("");
   };
 
@@ -100,6 +105,13 @@ function SocialCard({
       </div>
 
       <div style={{ marginTop: "20px" }}>
+        <input
+          type="text"
+          value={commentName}
+          onChange={(e) => setCommentName(e.target.value)}
+          placeholder="Your name"
+          style={{ width: "100%", padding: "10px", boxSizing: "border-box", marginBottom: "10px" }}
+        />
         <textarea
           value={commentBody}
           onChange={(e) => setCommentBody(e.target.value)}
