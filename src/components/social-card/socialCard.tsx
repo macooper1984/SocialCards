@@ -30,7 +30,9 @@ function SocialCard({
 }: SocialCardProps) {
   const [reactions, setReactions] = useState<{ [key: string]: number }>(() => {
     const savedReactions = localStorage.getItem(`reactions_${postId}`);
-    return savedReactions ? JSON.parse(savedReactions) : { like: 0, love: 0, laugh: 0, angry: 0 };
+    return savedReactions
+      ? JSON.parse(savedReactions)
+      : { like: 0, love: 0, laugh: 0, angry: 0 };
   });
 
   const [commentList, setCommentList] = useState<Comment[]>(() => {
@@ -50,7 +52,10 @@ function SocialCard({
   }, [commentList, postId]);
 
   const handleReact = (reaction: string) => {
-    setReactions((prevReactions) => ({ ...prevReactions, [reaction]: prevReactions[reaction] + 1 }));
+    setReactions((prevReactions) => ({
+      ...prevReactions,
+      [reaction]: prevReactions[reaction] + 1,
+    }));
   };
 
   const handleAddComment = () => {
@@ -68,42 +73,83 @@ function SocialCard({
   };
 
   const handleRemoveComment = (id: number) => {
-    setCommentList((prevComments) => prevComments.filter((comment) => comment.id !== id));
+    setCommentList((prevComments) =>
+      prevComments.filter((comment) => comment.id !== id)
+    );
   };
 
   return (
-    <div style={{ border: "1px solid #ddd", padding: "10px", maxWidth: "520px", margin: "auto" }}>
-      <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
-        <img src={portrait} alt={`${firstName} ${surname}`} width={70} style={{ marginRight: "10px" }} />
-        <span>
-          <strong>{firstName} {surname}</strong> <br /> at {time}
+    <div
+      style={{
+        border: "1px solid #ddd",
+        padding: "10px",
+        maxWidth: "520px",
+        margin: "auto",
+      }}
+    >
+      <div
+        style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}
+      >
+        <img
+          src={portrait}
+          alt={`${firstName} ${surname}`}
+          width={70}
+          style={{ marginRight: "10px" }}
+        />
+        <span style={{ textAlign: "left" }}>
+          <strong>
+            {firstName} {surname}
+          </strong>{" "}
+          <br /> at {time}
         </span>
       </div>
 
       <div style={{ marginBottom: "10px", textAlign: "left" }}>{body}</div>
-      
+
       <div style={{ marginBottom: "10px" }}>
-        <img src={mainImage} alt="Main content" style={{ width: "100%", height: "auto" }} />
+        <img
+          src={mainImage}
+          alt="Main content"
+          style={{ width: "100%", height: "auto" }}
+        />
       </div>
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "10px",
+        }}
+      >
         <button onClick={() => handleReact("like")}>👍 {reactions.like}</button>
         <button onClick={() => handleReact("love")}>❤️ {reactions.love}</button>
-        <button onClick={() => handleReact("laugh")}>😂 {reactions.laugh}</button>
-        <button onClick={() => handleReact("angry")}>😡 {reactions.angry}</button>
+        <button onClick={() => handleReact("laugh")}>
+          😂 {reactions.laugh}
+        </button>
+        <button onClick={() => handleReact("angry")}>
+          😡 {reactions.angry}
+        </button>
       </div>
 
       <div style={{ marginTop: "20px" }}>
         {commentList.map((comment) => (
-          <div key={comment.id} style={{ position: "relative", borderTop: "1px solid #eee", paddingTop: "10px", marginTop: "10px" }}>
-            <span 
-              onClick={() => handleRemoveComment(comment.id)} 
-              style={{ 
-                position: "absolute", 
-                top: "10px", 
-                right: "10px", 
-                color: "red", 
-                cursor: "pointer" 
+          <div
+            key={comment.id}
+            style={{
+              position: "relative",
+              borderTop: "1px solid #eee",
+              paddingTop: "10px",
+              marginTop: "10px",
+            }}
+          >
+            <span
+              onClick={() => handleRemoveComment(comment.id)}
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                color: "red",
+                cursor: "pointer",
               }}
             >
               &#10005;
@@ -120,15 +166,27 @@ function SocialCard({
           value={commentName}
           onChange={(e) => setCommentName(e.target.value)}
           placeholder="Your name"
-          style={{ width: "100%", padding: "10px", boxSizing: "border-box", marginBottom: "10px" }}
+          style={{
+            width: "100%",
+            padding: "10px",
+            boxSizing: "border-box",
+            marginBottom: "10px",
+          }}
         />
         <textarea
           value={commentBody}
           onChange={(e) => setCommentBody(e.target.value)}
           placeholder="Add a comment"
-          style={{ width: "100%", minHeight: "50px", padding: "10px", boxSizing: "border-box" }}
+          style={{
+            width: "100%",
+            minHeight: "50px",
+            padding: "10px",
+            boxSizing: "border-box",
+          }}
         ></textarea>
-        <button onClick={handleAddComment} style={{ marginTop: "10px" }}>Add Comment</button>
+        <button onClick={handleAddComment} style={{ marginTop: "10px" }}>
+          Add Comment
+        </button>
       </div>
     </div>
   );
